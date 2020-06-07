@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -29,22 +30,50 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  StreamSubscription connectivitySubcription;
+  ConnectivityResult oldresult;
 
-  void checkconn() async{
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if(connectivityResult==ConnectivityResult.none)
-    {
-      print("no connection");
-    }
-    else if(connectivityResult==ConnectivityResult.wifi)
-    {
-      print("wifi");
-    }
-    else if(connectivityResult==ConnectivityResult.mobile)
-    {
-      print("mobile");
-    }
+  @override
+  void initState(){
+    super.initState();
+
+    //continues look connection or not when app is running
+    connectivitySubcription=Connectivity().onConnectivityChanged.listen((ConnectivityResult resnow){
+      if(resnow==ConnectivityResult.none)
+        {
+          print("no connection");
+        }
+      else if (oldresult==ConnectivityResult.none){
+        print(" connection");
+      }
+      oldresult=resnow;
+    });
   }
+
+  //when go to nest page not work conectivity function
+  @override
+  void dispose()
+  {
+    super.dispose();
+    connectivitySubcription.cancel();
+  }
+
+  //coonectivity package
+//  void checkconn() async{
+//    var connectivityResult = await (Connectivity().checkConnectivity());
+//    if(connectivityResult==ConnectivityResult.none)
+//    {
+//      print("no connection");
+//    }
+//    else if(connectivityResult==ConnectivityResult.wifi)
+//    {
+//      print("wifi");
+//    }
+//    else if(connectivityResult==ConnectivityResult.mobile)
+//    {
+//      print("mobile");
+//    }
+//  }
 
 //  socked method
 //  void checkconn() async
@@ -76,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.display1,
             ),
             RaisedButton(
-                onPressed:checkconn,
+                onPressed:(){},
               child: Text("Check"),
               color: Colors.red,
             )
